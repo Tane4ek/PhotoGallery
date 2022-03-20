@@ -6,15 +6,16 @@
 //
 
 import UIKit
+import Kingfisher
 
 class PhotoViewController: UIViewController {
     
     private var downloadLabel = UILabel()
     private var photoImage = UIImageView()
-    private var photo: UIImage
+    private var photo: String
     
 // MARK: - Init
-    init(photo: UIImage) {
+    init(photo: String) {
         self.photo = photo
         super.init(nibName: nil, bundle: nil)
     }
@@ -43,7 +44,9 @@ class PhotoViewController: UIViewController {
     private func setupPhotoImage() {
         photoImage.contentMode = .scaleAspectFit
         photoImage.translatesAutoresizingMaskIntoConstraints = false
-        photoImage.image = photo
+        guard let downLoadURL = URL(string: photo) else { return }
+        let resource = ImageResource(downloadURL: downLoadURL)
+        photoImage.kf.setImage(with: resource, placeholder: nil, options: nil, completionHandler: nil)
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(photoImageTapped(tapGestureRecognizer:)))
         photoImage.isUserInteractionEnabled = true
         photoImage.addGestureRecognizer(tapGestureRecognizer)

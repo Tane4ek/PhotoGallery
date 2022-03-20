@@ -6,15 +6,14 @@
 //
 
 import UIKit
+import Kingfisher
 
 class PhotoCell: UICollectionViewCell {
     
     static let reusedID = "PhotoCell"
-    
+    private var sizeLabel = UILabel()
     var photoImageView = UIImageView(frame: .zero)
     var index = Int()
-    private var activityIndicator = UIActivityIndicatorView()
-  
     
     // MARK: - Init
     override init(frame: CGRect) {
@@ -28,9 +27,8 @@ class PhotoCell: UICollectionViewCell {
     
     //  MARK: - Setup UI
     private func setupUICell() {
-       // backgroundColor = UIColor.blue
         setupImageView()
-        setupActivityIndicator()
+        setupSizeLabel()
         setupLayoutCell()
     }
     
@@ -40,31 +38,37 @@ class PhotoCell: UICollectionViewCell {
         addSubview(photoImageView)
     }
     
-    private func setupActivityIndicator() {
-        activityIndicator.startAnimating()
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(activityIndicator)
+    private func setupSizeLabel() {
+        sizeLabel.backgroundColor = UIColor.white
+        sizeLabel.font = UIFont.systemFont(ofSize: 10)
+        sizeLabel.textColor = UIColor.black
+        sizeLabel.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(sizeLabel)
     }
     
     //    MARK: - Layout
     private func setupLayoutCell() {
         NSLayoutConstraint.activate([
+            sizeLabel.heightAnchor.constraint(equalToConstant: 15),
+            sizeLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            sizeLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
             photoImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             photoImageView.topAnchor.constraint(equalTo: topAnchor),
             photoImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            photoImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            photoImageView.bottomAnchor.constraint(equalTo: sizeLabel.topAnchor),
             
-            activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
-            activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
     }
     
-    func configure(indexPath: Int) {
+    func configure(model: UnsplashPhoto, indexPath: Int) {
+        sizeLabel.text = "\(model.width) x \(model.height)"
         index = indexPath
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        photoImageView.image = UIImage()
+    func setImage(url: String) {
+        guard let downLoadURL = URL(string: url) else { return }
+        let resource = ImageResource(downloadURL: downLoadURL)
+        photoImageView.kf.setImage(with: resource, placeholder: nil, options: nil, completionHandler: nil)
     }
 }

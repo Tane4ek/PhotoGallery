@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class GalleryPhotoViewController: UICollectionViewController {
     
@@ -18,6 +19,8 @@ class GalleryPhotoViewController: UICollectionViewController {
     private var pageNumber = Int()
     private var isLoading = false
     var totalCount = Int()
+    
+    private var cellImage = UIImage()
     
     let refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
@@ -49,13 +52,20 @@ class GalleryPhotoViewController: UICollectionViewController {
     
     private func updateDataFromServer() {
         self.networkDataFetcher.fetchImages(page: pageNumber, completion: { [weak self](searchResults) in
-            guard let fetchPhotos = searchResults else { return }
+            guard let fetchPhotos = searchResults else {
+                self?.showAlert()
+                return }
             self?.photos += fetchPhotos.results
             self?.totalCount = fetchPhotos.total
             self?.collectionView.reloadData()
             self?.isLoading = false
-            
         })
+    }
+    
+    private func showAlert() {
+        let alert = UIAlertController(title: "Attension!", message: "The Internet connection appears to be offline", preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
     private func loadNextPage() {
@@ -85,7 +95,7 @@ class GalleryPhotoViewController: UICollectionViewController {
     
     @objc func pullToRefresh(sender: UIRefreshControl) {
         pageNumber = 1
-        photos = []
+        photos.removeAll()
         updateDataFromServer()
         sender.endRefreshing()
     }
@@ -97,11 +107,11 @@ class GalleryPhotoViewController: UICollectionViewController {
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCell.reusedID, for: indexPath) as! PhotoCell
-        cell.configure(indexPath: indexPath.row)
-        let urlString = photos[indexPath.row].urls["small"]!
-        let _ = networkDataFetcher.getImage(from: indexPath.row, url: urlString) { (image: UIImage?) in
+        if !photos.isEmpty {
+            cell.configure(model: photos[indexPath.row], indexPath: indexPath.row)
+            let urlString = photos[indexPath.row].urls["small"]!
             if cell.index == indexPath.row {
-                cell.photoImageView.image = image
+                cell.setImage(url: urlString)
             }
         }
         if indexPath.row == photos.count - 1 {
@@ -112,7 +122,7 @@ class GalleryPhotoViewController: UICollectionViewController {
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as! PhotoCell
-        guard let image = cell.photoImageView.image else { return }
+        guard let image = photos[indexPath.row].urls["small"] else {return}
         let photoViewController = PhotoViewController(photo: image)
         navigationController?.pushViewController(photoViewController, animated: true)
     }
