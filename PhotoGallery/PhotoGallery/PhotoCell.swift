@@ -12,7 +12,7 @@ class PhotoCell: UICollectionViewCell {
     
     static let reusedID = "PhotoCell"
     private var sizeLabel = UILabel()
-    var photoImageView = UIImageView(frame: .zero)
+    private var photoImageView = UIImageView(frame: .zero)
     var index = Int()
     
     // MARK: - Init

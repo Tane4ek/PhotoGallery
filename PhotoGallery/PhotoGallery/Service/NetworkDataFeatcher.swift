@@ -35,7 +35,7 @@ class NetworkDataFeatcher {
         }
     }
     
-    func getImage(from index: Int, url: String, completion:@escaping ((UIImage?) -> Void)) {
+   /* func getImage(from index: Int, url: String, completion:@escaping ((UIImage?) -> Void)) {
         guard let url = URL(string: url)
         else {
             print("Unable to create URL")
@@ -56,5 +56,5 @@ class NetworkDataFeatcher {
                 completion(nil)
             }
         }
-    }
+    }*/
 }

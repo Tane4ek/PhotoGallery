@@ -121,9 +121,11 @@ class GalleryPhotoViewController: UICollectionViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as! PhotoCell
-        guard let image = photos[indexPath.row].urls["small"] else {return}
-        let photoViewController = PhotoViewController(photo: image)
+        guard
+            let image = photos[indexPath.row].urls["small"],
+            let createDate = photos[indexPath.row].createdAt as? String
+        else {return}
+        let photoViewController = PhotoViewController(photo: image, createdDate: createDate)
         navigationController?.pushViewController(photoViewController, animated: true)
     }
 }

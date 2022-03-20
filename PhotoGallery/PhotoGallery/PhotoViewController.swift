@@ -10,13 +10,15 @@ import Kingfisher
 
 class PhotoViewController: UIViewController {
     
-    private var downloadLabel = UILabel()
+    private var createdLabel = UILabel()
     private var photoImage = UIImageView()
     private var photo: String
+    private var createdDate: String
     
 // MARK: - Init
-    init(photo: String) {
+    init(photo: String, createdDate: String) {
         self.photo = photo
+        self.createdDate = createdDate
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -54,35 +56,46 @@ class PhotoViewController: UIViewController {
     }
     
     private func setupLabel() {
-        downloadLabel.text = "date of download: "
-        downloadLabel.font = UIFont.systemFont(ofSize: 20)
-        downloadLabel.tintColor = UIColor.black
-        downloadLabel.translatesAutoresizingMaskIntoConstraints = false
-        photoImage.addSubview(downloadLabel)
+        createdLabel.text = "date of create: " + convertToDateFormat()
+        createdLabel.font = UIFont.systemFont(ofSize: 20)
+        createdLabel.tintColor = UIColor.black
+        createdLabel.translatesAutoresizingMaskIntoConstraints = false
+        photoImage.addSubview(createdLabel)
     }
     
     private func setupLayout() {
         NSLayoutConstraint.activate([
-            downloadLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            downloadLabel.heightAnchor.constraint(equalToConstant: 25),
-            downloadLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            createdLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            createdLabel.heightAnchor.constraint(equalToConstant: 25),
+            createdLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             photoImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             photoImage.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             photoImage.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            photoImage.bottomAnchor.constraint(equalTo: downloadLabel.topAnchor, constant: -20),
+            photoImage.bottomAnchor.constraint(equalTo: createdLabel.topAnchor, constant: -20),
         ])
     }
     
     @objc func photoImageTapped(tapGestureRecognizer: UITapGestureRecognizer) {
         if view.backgroundColor == UIColor.black {
             view.backgroundColor = UIColor.white
-            downloadLabel.isHidden = false
+            createdLabel.isHidden = false
             navigationController?.navigationBar.isHidden = false
         } else {
             view.backgroundColor = UIColor.black
-            downloadLabel.isHidden = true
+            createdLabel.isHidden = true
             navigationController?.navigationBar.isHidden = true
         }
+    }
+    
+    private func convertToDateFormat() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'hh:mm:ss-hh:mm"
+        print(createdDate)
+        guard let theDate = dateFormatter.date(from: createdDate) else {return ""}
+        let newDateFormater = DateFormatter()
+        newDateFormater.dateFormat = "MM/dd/yyyy, hh:mm:ss"
+        let datestring = newDateFormater.string(from: theDate)
+        return datestring
     }
 }
