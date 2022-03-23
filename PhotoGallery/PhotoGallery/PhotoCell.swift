@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import Kingfisher
+import SDWebImage
 
 class PhotoCell: UICollectionViewCell {
     
@@ -68,7 +68,6 @@ class PhotoCell: UICollectionViewCell {
     
     func setImage(url: String) {
         guard let downLoadURL = URL(string: url) else { return }
-        let resource = ImageResource(downloadURL: downLoadURL)
-        photoImageView.kf.setImage(with: resource, placeholder: nil, options: nil, completionHandler: nil)
+        photoImageView.sd_setImage(with: downLoadURL, completed: nil)
     }
 }

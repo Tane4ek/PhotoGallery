@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import Kingfisher
+import SDWebImage
 
 class PhotoViewController: UIViewController {
     
@@ -47,8 +47,7 @@ class PhotoViewController: UIViewController {
         photoImage.contentMode = .scaleAspectFit
         photoImage.translatesAutoresizingMaskIntoConstraints = false
         guard let downLoadURL = URL(string: photo) else { return }
-        let resource = ImageResource(downloadURL: downLoadURL)
-        photoImage.kf.setImage(with: resource, placeholder: nil, options: nil, completionHandler: nil)
+        photoImage.sd_setImage(with: downLoadURL, completed: nil)
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(photoImageTapped(tapGestureRecognizer:)))
         photoImage.isUserInteractionEnabled = true
         photoImage.addGestureRecognizer(tapGestureRecognizer)
